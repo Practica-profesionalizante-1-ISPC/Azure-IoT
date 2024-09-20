@@ -18,7 +18,7 @@
       "left": -43.8,
       "attrs": { "temperature": "38.3", "humidity": "53" }
     },
-    { "type": "wokwi-led", "id": "led1", "top": 6, "left": -73, "attrs": { "color": "red" } },
+    { "type": "wokwi-led", "id": "led1", "top": 25.2, "left": -73, "attrs": { "color": "red" } },
     {
       "type": "wokwi-resistor",
       "id": "r1",
@@ -40,7 +40,6 @@
     [ "esp:TX", "$serialMonitor:RX", "", [] ],
     [ "esp:RX", "$serialMonitor:TX", "", [] ],
     [ "pot1:GND", "esp:GND.1", "black", [ "v0" ] ],
-    [ "pot1:VCC", "esp:5V", "red", [ "h-28.8", "v67.2", "h302.21" ] ],
     [ "pot1:SIG", "esp:33", "green", [ "h-9.6", "v37.6" ] ],
     [ "dht1:GND", "esp:GND.2", "black", [ "h115.2", "v48" ] ],
     [ "led1:C", "esp:GND.1", "black", [ "v0" ] ],
@@ -49,7 +48,8 @@
     [ "esp:12", "r2:2", "green", [ "v0", "h-28.65" ] ],
     [ "r2:2", "dht1:SDA", "green", [ "h0" ] ],
     [ "esp:3V3", "r2:1", "red", [ "h0.15", "v-105.6", "h-28.8" ] ],
-    [ "dht1:VCC", "r2:1", "red", [ "v0" ] ]
+    [ "dht1:VCC", "r2:1", "red", [ "v0" ] ],
+    [ "pot1:VCC", "esp:3V3", "red", [ "h0", "v-105.6" ] ]
   ],
   "dependencies": {}
 }
