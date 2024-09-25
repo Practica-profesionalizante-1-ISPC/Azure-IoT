@@ -41,12 +41,12 @@ float cHumedad = -0.01;    // Coeficiente de la humedad
 #define IOT_CONFIG_WIFI_PASSWORD ""
 
 // Azure IoT
-#define IOT_CONFIG_IOTHUB_FQDN "ProyectoISPC.azure-devices.net" 
-#define IOT_CONFIG_DEVICE_ID "11092024"
-#define IOT_CONFIG_DEVICE_KEY "CP2KDKa/tZyCcHelRWvlp8NM9JQwY56E9AIoTLaurq8="
+#define IOT_CONFIG_IOTHUB_FQDN "prueba249.azure-devices.net" 
+#define IOT_CONFIG_DEVICE_ID "24092024"
+#define IOT_CONFIG_DEVICE_KEY "iTjq818Sx393FKB8QHlqE+lnpobbXNGC+xbKLi/aAbI="
 
 // Tiempo que se envia cada mensaje al server.
-#define TELEMETRY_FREQUENCY_MILLISECS 10000
+#define TELEMETRY_FREQUENCY_MILLISECS 3000
 
 // When developing for your own Arduino-based platform,
 // please follow the format '(ard;<platform>)'. 
