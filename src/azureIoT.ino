@@ -85,7 +85,7 @@ static uint8_t sas_signature_buffer[256];
 static unsigned long next_telemetry_send_time_ms = 0;
 static char telemetry_topic[128];
 static uint8_t telemetry_payload[100];
-static uint32_t telemetry_send_count = 0;
+
 
 #define INCOMING_DATA_BUFFER_SIZE 128
 static char incoming_data[INCOMING_DATA_BUFFER_SIZE];
@@ -302,21 +302,40 @@ static void establishConnection()
   (void)initializeMqttClient();
 }
 
+
+// Función para obtener la fecha y hora actual en formato ISO 8601
+static void getCurrentTime(char* buffer, size_t max_size) {
+  time_t now = time(NULL);
+  struct tm timeinfo;
+  gmtime_r(&now, &timeinfo); // Convertir a UTC
+  strftime(buffer, max_size, "%Y-%m-%dT%H:%M:%SZ", &timeinfo); // Formato ISO 8601
+}
+
+
 static void getTelemetryPayload(az_span payload, az_span* out_payload)
 {
   az_span original_payload = payload;
+  
+   // Obtener la fecha y hora actual
+    // Obtener la fecha y hora actual
+  // char current_time[64];
+  // getCurrentTime(current_time, sizeof(current_time));
 
-  payload = az_span_copy(
-      payload, AZ_SPAN_FROM_STR("{ \"msgCount\": "));
-  (void)az_span_u32toa(payload, telemetry_send_count++, &payload);
-      payload = az_span_copy(payload, AZ_SPAN_FROM_STR(", \"Ruido\": "));
-  (void)az_span_u32toa(payload, ruido, &payload);
+  // Construir el mensaje JSON con la fecha y hora
+  // payload = az_span_copy(payload, AZ_SPAN_FROM_STR("{ \"Fecha\": \""));
+  // payload = az_span_copy(payload, az_span_create_from_str(current_time)); 
+
+  payload = az_span_copy(payload, AZ_SPAN_FROM_STR("\", \"Ruido\": "));
+  (void)az_span_dtoa(payload, ruido, 2, &payload);
+
         payload = az_span_copy(payload, AZ_SPAN_FROM_STR(", \"Ruido Corregido\": "));
-  (void)az_span_u32toa(payload, ruidoCorregido2, &payload);
+  (void)az_span_dtoa(payload, ruidoCorregido2, 2, &payload);
+
         payload = az_span_copy(payload, AZ_SPAN_FROM_STR(", \"Humedad\": "));
-  (void)az_span_u32toa(payload, hum, &payload);
+  (void)az_span_dtoa(payload, hum, 2, &payload);
+
           payload = az_span_copy(payload, AZ_SPAN_FROM_STR(", \"Temperatura\": "));
-  (void)az_span_u32toa(payload, temp, &payload);
+  (void)az_span_dtoa(payload, temp, 2, &payload);
 
 
   payload = az_span_copy(payload, AZ_SPAN_FROM_STR(" }"));
