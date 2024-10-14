@@ -41,12 +41,12 @@ float cHumedad = -0.01;    // Coeficiente de la humedad
 #define IOT_CONFIG_WIFI_PASSWORD ""
 
 // Azure IoT
-#define IOT_CONFIG_IOTHUB_FQDN "prueba249.azure-devices.net" 
-#define IOT_CONFIG_DEVICE_ID "24092024"
-#define IOT_CONFIG_DEVICE_KEY "iTjq818Sx393FKB8QHlqE+lnpobbXNGC+xbKLi/aAbI="
+#define IOT_CONFIG_IOTHUB_FQDN "ISPC1.azure-devices.net" 
+#define IOT_CONFIG_DEVICE_ID "dispositivo2"
+#define IOT_CONFIG_DEVICE_KEY "btPHnfPNuM7c/gNUrbO30xAxfW/k4IfIPKFOv7I6lqY="
 
 // Tiempo que se envia cada mensaje al server.
-#define TELEMETRY_FREQUENCY_MILLISECS 3000
+#define TELEMETRY_FREQUENCY_MILLISECS 5000
 
 // When developing for your own Arduino-based platform,
 // please follow the format '(ard;<platform>)'. 
@@ -303,46 +303,41 @@ static void establishConnection()
 }
 
 
-// Función para obtener la fecha y hora actual en formato ISO 8601
-static void getCurrentTime(char* buffer, size_t max_size) {
-  time_t now = time(NULL);
-  struct tm timeinfo;
-  gmtime_r(&now, &timeinfo); // Convertir a UTC
-  strftime(buffer, max_size, "%Y-%m-%dT%H:%M:%SZ", &timeinfo); // Formato ISO 8601
-}
-
 
 static void getTelemetryPayload(az_span payload, az_span* out_payload)
 {
   az_span original_payload = payload;
-  
-   // Obtener la fecha y hora actual
-    // Obtener la fecha y hora actual
-  // char current_time[64];
-  // getCurrentTime(current_time, sizeof(current_time));
 
-  // Construir el mensaje JSON con la fecha y hora
-  // payload = az_span_copy(payload, AZ_SPAN_FROM_STR("{ \"Fecha\": \""));
-  // payload = az_span_copy(payload, az_span_create_from_str(current_time)); 
+  // Obtener tiempo actual en formato legible DD/MM/AAAA
+  time_t now = time(NULL);
+  struct tm timeinfo;
+  localtime_r(&now, &timeinfo);
+  char timeStr[30];
+  strftime(timeStr, sizeof(timeStr), "%d/%m/%Y", &timeinfo);
 
-  payload = az_span_copy(payload, AZ_SPAN_FROM_STR("\", \"Ruido\": "));
+  // Agregar la fecha al payload
+  payload = az_span_copy(payload, AZ_SPAN_FROM_STR("{ \"fecha\": \""));
+  payload = az_span_copy(payload, az_span_create_from_str(timeStr));
+
+  // Agregar los otros datos de telemetría
+  payload = az_span_copy(payload, AZ_SPAN_FROM_STR("\", \"ruido\": "));
   (void)az_span_dtoa(payload, ruido, 2, &payload);
 
-        payload = az_span_copy(payload, AZ_SPAN_FROM_STR(", \"Ruido Corregido\": "));
+  payload = az_span_copy(payload, AZ_SPAN_FROM_STR(", \"ruido_corregido\": "));
   (void)az_span_dtoa(payload, ruidoCorregido2, 2, &payload);
 
-        payload = az_span_copy(payload, AZ_SPAN_FROM_STR(", \"Humedad\": "));
+  payload = az_span_copy(payload, AZ_SPAN_FROM_STR(", \"humedad\": "));
   (void)az_span_dtoa(payload, hum, 2, &payload);
 
-          payload = az_span_copy(payload, AZ_SPAN_FROM_STR(", \"Temperatura\": "));
+  payload = az_span_copy(payload, AZ_SPAN_FROM_STR(", \"temperatura\": "));
   (void)az_span_dtoa(payload, temp, 2, &payload);
-
 
   payload = az_span_copy(payload, AZ_SPAN_FROM_STR(" }"));
   payload = az_span_copy_u8(payload, '\0');
 
   *out_payload = az_span_slice(original_payload, 0, az_span_size(original_payload) - az_span_size(payload));
 }
+
 
 static void sendTelemetry()
 {
